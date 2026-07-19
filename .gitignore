@@ -7,3 +7,4 @@ data/*.faiss
 data/*.pkl
 models/
 .pytest_cache/
+results/.faithfulness_cache.jsonl
