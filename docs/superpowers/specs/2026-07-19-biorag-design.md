@@ -22,9 +22,11 @@ at NUST, so the CV reads as one coherent track rather than unrelated projects.
 
 - **Time budget: 5 days at 5–6 hours per day (~28 hours).** This is the binding
   constraint and drives every scope decision below.
-- **No paid API access.** Generation uses Groq's free tier (Gemini free tier as
-  fallback). Embedding and fine-tuning run locally on CPU; free Colab GPU is an
-  acceptable escape hatch if fine-tuning is too slow.
+- **No paid API access.** Generation uses the Gemini free tier (`gemini-3.5-flash`,
+  pinned rather than a `-latest` alias so the model cannot change under a recorded
+  evaluation). Groq was the original choice but its signup was unavailable.
+  Embedding and fine-tuning run locally on CPU; free Colab GPU is an acceptable
+  escape hatch if fine-tuning is too slow.
 - Author has no prior LLM, vector-search, or deployment experience. Day 2 carries the
   highest risk of overrun.
 
@@ -119,7 +121,7 @@ move to free Colab GPU rather than reducing the dataset.
 
 ### generate/
 Assembles a prompt from the query plus top-k retrieved chunks, instructing the model to
-answer only from the provided context and to cite PMIDs. Calls Groq's free-tier API.
+answer only from the provided context and to cite PMIDs. Calls the Gemini free-tier API.
 
 Handles the two failure modes that matter: no relevant chunks retrieved (answer "not
 found in corpus" rather than hallucinating), and API errors (retry once, then fail
