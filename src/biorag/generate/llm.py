@@ -14,9 +14,9 @@ from google.genai import types
 
 load_dotenv()
 
-# Pinned deliberately: a "-latest" alias would change model under the evaluation
-# and silently invalidate recorded results. The 2.0 series has no free-tier quota.
-MODEL = "gemini-3.5-flash"
+# Pinned deliberately: a "-latest" alias would change model under the evaluation.
+# Lite chosen for quota: gemini-3.5-flash allows only 20 requests/DAY free.
+MODEL = "gemini-3.1-flash-lite"
 
 
 MAX_ATTEMPTS = 4
