@@ -1,7 +1,8 @@
 # BioRAG — Retrieval-Augmented QA over Biomechanics Literature
 
-Question answering over 3,000 PubMed abstracts in musculoskeletal and spinal
-biomechanics. Built to **compare and measure retrieval strategies**, not to demo a
+Question answering over 2,785 PubMed abstracts in human biomechanics and movement
+science — gait analysis, joint kinematics, motion capture, and clinical movement
+assessment. Built to **compare and measure retrieval strategies**, not to demo a
 chatbot — the deliverable is the results table, not the UI.
 
 ## Results
@@ -10,17 +11,17 @@ chatbot — the deliverable is the results table, not the UI.
 
 | Retriever | recall@5 | recall@10 | MRR |
 |---|---|---|---|
-| BM25 (baseline) | 0.486 | 0.514 | 0.435 |
-| MiniLM (off-the-shelf) | **0.771** | **0.857** | **0.698** |
-| MiniLM (fine-tuned) | 0.786 | 0.857 | 0.595 |
+| BM25 (baseline) | 0.486 | 0.514 | 0.420 |
+| MiniLM (off-the-shelf) | **0.743** | **0.829** | **0.631** |
+| MiniLM (fine-tuned) | 0.729 | 0.800 | 0.533 |
 
-**Dense retrieval beat the lexical baseline decisively** — recall@5 rose 59%
+**Dense retrieval beat the lexical baseline decisively** — recall@5 rose 53%
 relative to BM25.
 
-**Fine-tuning did not work.** recall@5 moved +0.015 (noise at n=35), recall@10 was
-unchanged, and MRR *fell* from 0.698 to 0.595. Per question, the fine-tuned model
-was better on 2, worse on 10, and unchanged on 23 — a 5:1 ratio against, not
-sampling noise.
+**Fine-tuning did not work — it lost on every metric.** recall@5 0.743 → 0.729,
+recall@10 0.829 → 0.800, MRR 0.631 → 0.533. Per question, the fine-tuned model was
+better on 2, worse on 12, unchanged on 21 — a 6:1 ratio against, not sampling
+noise.
 
 Why: training pairs were `(title, abstract_body)`, which teaches *document-internal*
 similarity. The task being measured is `(question, abstract)` similarity — a
@@ -38,12 +39,13 @@ Shipping the fine-tuned model would knowingly serve the worse system.
 |---|---|
 | Unanswerable questions correctly refused | 5 / 5 |
 | Hallucinated answers to out-of-corpus questions | 0 |
-| Citations resolving to retrieved context | 15 / 15 |
-| Answerable questions answered | 12 / 15 |
-| False refusals (correct abstract retrieved, still refused) | 1 |
+| Citations resolving to retrieved context | 35 / 35 |
+| Answerable questions answered | 10 / 15 |
+| False refusals (correct abstract retrieved, still refused) | 2 |
 
-Two of the three refusals on answerable questions were *correct* — retrieval had
+Three of the five refusals on answerable questions were *correct* — retrieval had
 genuinely failed to surface the right abstract, and declining beats fabricating.
+The other two are a real conservatism bias worth fixing.
 
 ## What I built
 
@@ -75,7 +77,7 @@ to Gemini touched exactly one file.
 
 **Evaluation leakage.** Abstracts cited by the evaluation set are excluded from
 training-pair generation (`src/biorag/train/pairs.py`), enforced in code and covered
-by a unit test. On the real corpus this held out 45 PMIDs / 62 chunks. Without it,
+by a unit test. On the real corpus this held out 45 PMIDs / 61 chunks. Without it,
 the fine-tuned model would have been scored on abstracts it trained on.
 
 **Chunk-vs-document counting.** About two thirds of abstracts exceed the chunker's
@@ -99,10 +101,16 @@ Stated plainly, because they bound what these numbers mean:
   not yet been fully reviewed by a domain expert.
 - **n = 35 answerable questions is small.** Differences below ~0.05 should not be
   treated as real. The recall@5 gap between off-the-shelf and fine-tuned is inside
-  that band; the MRR gap and the 10-vs-2 per-question split are not.
+  that band; the MRR gap and the 12-vs-2 per-question split are not.
 - **Faithfulness scoring is partly automated.** Citation *resolution* is checked
   objectively; whether each claim faithfully represents its cited abstract still
   needs a human reader.
+- **Non-human studies are filtered by keyword, not MeSH.** The Entrez query searched
+  species-agnostic vocabulary ("gait analysis", "joint kinematics"), so ~7% of fetched
+  abstracts were veterinary or animal research. `src/biorag/ingest/species.py` removes
+  215 of them, but it is a heuristic: it will miss animal papers that never name a
+  species, and could drop a human study that discusses an animal model early. The
+  precise fix is `AND humans[MeSH Terms]` in the query, which needs a refetch.
 - **Single annotator, single domain, English only.**
 - **Recall is computed against labeled PMIDs only.** If another abstract also answers
   a question but was not labeled, retrievers are under-credited — equally across all
@@ -128,7 +136,8 @@ PYTHONPATH=src python -m biorag.evaluate.run_retrieval        # the results tabl
 PYTHONPATH=src streamlit run src/biorag/app.py
 ```
 
-Tests: `pytest` (25 tests — metrics, leakage guard, chunking, retrievers).
+Tests: `pytest` (35 tests — metrics, leakage guard, chunking, retrievers,
+species filter).
 
 Docker:
 
