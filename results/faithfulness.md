@@ -27,9 +27,20 @@ with a small, fast model.
 Every citation resolves to an abstract that was actually in the prompt context, so
 the system is not inventing PMIDs.
 
-**Manual grounding scores:** _still to be filled in below — the checks above verify
-that citations exist and resolve, not that each claim is faithful to what the cited
-abstract actually says. That judgement requires reading them._
+**Manual grounding (10 answered): 9 grounded, 1 partially grounded, 0 hallucinated.**
+
+Every answered response was checked claim-by-claim against the full text of each
+abstract it cited. No answer contradicted or invented a finding. The single
+partial (q011) imports a paediatric hip-pathology source into an answer about hip
+osteoarthritis without flagging that the population differs — a context elision
+rather than a false statement.
+
+> **How this was graded, stated plainly:** these scores were produced with AI
+> assistance, not by an independent human expert. That is weaker evidence than
+> human review and shares the blind spots of the system that wrote the answers.
+> One grade was nearly recorded wrongly because the check was initially run
+> against truncated source text; grading against full abstracts corrected it.
+> Treat these as a first pass that a domain expert should confirm.
 
 ## q001 (single)
 
@@ -41,7 +52,7 @@ abstract actually says. That judgement requires reading them._
 
 **Expected:** 41713462
 
-**Score:** 
+**Score:** correct refusal — retrieval missed the labeled abstract, so declining was right
 
 ## q002 (single)
 
@@ -53,7 +64,7 @@ abstract actually says. That judgement requires reading them._
 
 **Expected:** 41792064
 
-**Score:** 
+**Score:** FALSE REFUSAL — correct abstract (41792064) was retrieved, model declined anyway
 
 ## q003 (single)
 
@@ -68,7 +79,7 @@ abstract actually says. That judgement requires reading them._
 
 **Expected:** 40959465
 
-**Score:** 
+**Score:** grounded — every correlation (UPDRS-III/step width, Mini-BESTest, Stroop-III, TMT-A) matches 40959465 verbatim; 41220871 and 42341295 claims also supported
 
 ## q004 (single)
 
@@ -80,7 +91,7 @@ abstract actually says. That judgement requires reading them._
 
 **Expected:** 41429909
 
-**Score:** 
+**Score:** grounded — APA amplitude, absent step association, and on-medication persistence all match 41429909
 
 ## q005 (single)
 
@@ -92,7 +103,7 @@ abstract actually says. That judgement requires reading them._
 
 **Expected:** 42004710
 
-**Score:** 
+**Score:** grounded — reduced vGRF loading rate, reduced peak negative ankle power, and increased patellofemoral stress all match 42004710
 
 ## q006 (single)
 
@@ -106,7 +117,7 @@ While gait biomechanics (such as peak knee extension angle and peak knee extensi
 
 **Expected:** 41943805
 
-**Score:** 
+**Score:** grounded — ACLR+M kinematics match 41943805; the 24-month pKEA/pKEM normalisation matches 41660297 and the load-response impairment matches 42452538
 
 ## q007 (single)
 
@@ -118,7 +129,7 @@ While gait biomechanics (such as peak knee extension angle and peak knee extensi
 
 **Expected:** 41758888
 
-**Score:** 
+**Score:** correct refusal — retrieval missed the labeled abstract
 
 ## q008 (single)
 
@@ -130,7 +141,7 @@ While gait biomechanics (such as peak knee extension angle and peak knee extensi
 
 **Expected:** 41651450
 
-**Score:** 
+**Score:** grounded — TDS, vGRF, absence of further gain at 5 years, and HHS improvement all match 41156314
 
 ## q009 (single)
 
@@ -142,7 +153,7 @@ While gait biomechanics (such as peak knee extension angle and peak knee extensi
 
 **Expected:** 41337175
 
-**Score:** 
+**Score:** grounded — knowledge-graph description matches 41337175 closely
 
 ## q010 (single)
 
@@ -154,7 +165,7 @@ While gait biomechanics (such as peak knee extension angle and peak knee extensi
 
 **Expected:** 41985188
 
-**Score:** 
+**Score:** grounded — KOOS-Pain, 6-MWT, null aquatic/control results and IL-1β/IL-1RA finding all match 41985188
 
 ## q011 (single)
 
@@ -166,7 +177,7 @@ While gait biomechanics (such as peak knee extension angle and peak knee extensi
 
 **Expected:** 41177154
 
-**Score:** 
+**Score:** partially grounded — the UCM claims match 42150314, but 41642290 studies children/adolescents with hip pathologies and the answer imports it into a hip-osteoarthritis answer without noting the population differs
 
 ## q012 (single)
 
@@ -178,7 +189,7 @@ While gait biomechanics (such as peak knee extension angle and peak knee extensi
 
 **Expected:** 41485206
 
-**Score:** 
+**Score:** grounded — propulsion time, ROM and muscle activation patterns all match 41485206
 
 ## q013 (single)
 
@@ -190,7 +201,7 @@ While gait biomechanics (such as peak knee extension angle and peak knee extensi
 
 **Expected:** 41179402
 
-**Score:** 
+**Score:** grounded — torque values, 7/8 BTB failure rate, humeral-side interface, and palmaris-vs-native equivalence all match 41179402
 
 ## q014 (single)
 
@@ -202,7 +213,7 @@ While gait biomechanics (such as peak knee extension angle and peak knee extensi
 
 **Expected:** 41091616
 
-**Score:** 
+**Score:** correct refusal — retrieval missed the labeled abstract
 
 ## q015 (single)
 
@@ -214,7 +225,7 @@ While gait biomechanics (such as peak knee extension angle and peak knee extensi
 
 **Expected:** 42235271
 
-**Score:** 
+**Score:** FALSE REFUSAL — correct abstract was retrieved, model declined anyway
 
 ## q036 (unanswerable)
 
@@ -226,7 +237,7 @@ While gait biomechanics (such as peak knee extension angle and peak knee extensi
 
 **Expected:** (none — should refuse)
 
-**Score:** 
+**Score:** correct refusal — out of corpus
 
 ## q037 (unanswerable)
 
@@ -238,7 +249,7 @@ While gait biomechanics (such as peak knee extension angle and peak knee extensi
 
 **Expected:** (none — should refuse)
 
-**Score:** 
+**Score:** correct refusal — out of corpus
 
 ## q038 (unanswerable)
 
@@ -250,7 +261,7 @@ While gait biomechanics (such as peak knee extension angle and peak knee extensi
 
 **Expected:** (none — should refuse)
 
-**Score:** 
+**Score:** correct refusal — out of corpus
 
 ## q039 (unanswerable)
 
@@ -262,7 +273,7 @@ While gait biomechanics (such as peak knee extension angle and peak knee extensi
 
 **Expected:** (none — should refuse)
 
-**Score:** 
+**Score:** correct refusal — out of corpus
 
 ## q040 (unanswerable)
 
@@ -274,4 +285,4 @@ While gait biomechanics (such as peak knee extension angle and peak knee extensi
 
 **Expected:** (none — should refuse)
 
-**Score:** 
+**Score:** correct refusal — out of corpus

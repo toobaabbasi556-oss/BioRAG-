@@ -42,6 +42,7 @@ Shipping the fine-tuned model would knowingly serve the worse system.
 | Citations resolving to retrieved context | 35 / 35 |
 | Answerable questions answered | 10 / 15 |
 | False refusals (correct abstract retrieved, still refused) | 2 |
+| Grounding of answered responses | 9 grounded, 1 partial, 0 hallucinated |
 
 Three of the five refusals on answerable questions were *correct* — retrieval had
 genuinely failed to surface the right abstract, and declining beats fabricating.
@@ -102,9 +103,11 @@ Stated plainly, because they bound what these numbers mean:
 - **n = 35 answerable questions is small.** Differences below ~0.05 should not be
   treated as real. The recall@5 gap between off-the-shelf and fine-tuned is inside
   that band; the MRR gap and the 12-vs-2 per-question split are not.
-- **Faithfulness scoring is partly automated.** Citation *resolution* is checked
-  objectively; whether each claim faithfully represents its cited abstract still
-  needs a human reader.
+- **Faithfulness grading was AI-assisted, not independently human-reviewed.** Each
+  answered response was checked claim-by-claim against the full text of its cited
+  abstracts, but by the same class of system that produced the answers — weaker
+  evidence than expert review, and sharing its blind spots. A domain expert should
+  confirm them.
 - **Non-human studies are filtered by keyword, not MeSH.** The Entrez query searched
   species-agnostic vocabulary ("gait analysis", "joint kinematics"), so ~7% of fetched
   abstracts were veterinary or animal research. `src/biorag/ingest/species.py` removes
