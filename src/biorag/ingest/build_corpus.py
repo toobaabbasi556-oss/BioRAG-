@@ -9,6 +9,7 @@ from pathlib import Path
 
 from biorag.ingest.clean import chunk_abstract
 from biorag.ingest.fetch import fetch_records, search_pmids
+from biorag.ingest.species import is_animal_study
 
 RAW_PATH = Path("data/raw.jsonl")
 CORPUS_PATH = Path("data/corpus.jsonl")
@@ -20,9 +21,15 @@ def build(limit: int) -> None:
     fetch_records(pmids, RAW_PATH)
 
     chunks = []
+    skipped = 0
     with RAW_PATH.open() as f:
         for line in f:
             rec = json.loads(line)
+            # The Entrez query matches veterinary biomechanics too, since
+            # "gait analysis" and "joint kinematics" are species-agnostic.
+            if is_animal_study(rec["title"], rec["text"]):
+                skipped += 1
+                continue
             chunks.extend(
                 chunk_abstract(
                     pmid=rec["pmid"], title=rec["title"], text=rec["text"],
@@ -34,7 +41,7 @@ def build(limit: int) -> None:
         for chunk in chunks:
             f.write(json.dumps(chunk.to_dict()) + "\n")
 
-    print(f"wrote {len(chunks)} chunks to {CORPUS_PATH}")
+    print(f"wrote {len(chunks)} chunks to {CORPUS_PATH} ({skipped} animal studies excluded)")
 
 
 def load_corpus(path: Path = CORPUS_PATH) -> list:
