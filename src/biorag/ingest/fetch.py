@@ -12,7 +12,8 @@ Entrez.email = "Toobaabbasi556@gmail.com"
 SEARCH_QUERY = (
     '("spinal load"[All Fields] OR "spine biomechanics"[All Fields] '
     'OR "gait analysis"[All Fields] OR "musculoskeletal model"[All Fields] '
-    'OR "lumbar spine"[All Fields] OR "joint kinematics"[All Fields] '
+    'OR "lumbar spine biomechanics"[All Fields] OR "joint kinematics"[All Fields] '
+    'OR "ground reaction force"[All Fields] OR "electromyography"[Title] '
     'OR "motion capture"[All Fields]) AND hasabstract'
 )
 
