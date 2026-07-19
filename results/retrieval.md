@@ -1,51 +1,46 @@
 # Retrieval results
 
-Corpus: 4593 chunks from 3000 abstracts. Scored on 35 answerable questions (5 unanswerable questions are excluded — recall is undefined without a relevant set).
+Corpus: 4248 chunks from 2785 abstracts. Scored on 35 answerable questions (5 unanswerable questions are excluded — recall is undefined without a relevant set).
 
 | Retriever | recall@5 | recall@10 | MRR |
 |---|---|---|---|
-| BM25 (baseline) | 0.486 | 0.514 | 0.435 |
-| MiniLM (off-the-shelf) | 0.771 | 0.857 | 0.698 |
-| MiniLM (fine-tuned) | 0.786 | 0.857 | 0.595 |
+| BM25 (baseline) | 0.486 | 0.514 | 0.420 |
+| MiniLM (off-the-shelf) | 0.743 | 0.829 | 0.631 |
+| MiniLM (fine-tuned) | 0.729 | 0.800 | 0.533 |
 
 ## Reading these numbers
 
 **Dense retrieval clearly beats the lexical baseline.** Off-the-shelf MiniLM lifts
-recall@5 from 0.486 to 0.771 over BM25 — a 59% relative improvement. Questions were
-written to paraphrase rather than echo their source abstracts (mean content-word
-overlap 0.30), so BM25 is not being handicapped by artificial vocabulary mismatch.
+recall@5 from 0.486 to 0.743 — a 53% relative improvement. Questions paraphrase
+rather than echo their source abstracts (mean content-word overlap 0.30), so BM25
+is not handicapped by artificial vocabulary mismatch.
 
-**Fine-tuning did not work, and the headline metric got worse.** recall@5 rose by
-0.015 — well within noise at n=35 — recall@10 was unchanged, and MRR fell from
-0.698 to 0.595. Per-question, the fine-tuned model was better on 2 questions, worse
-on 10, and unchanged on 23. A 5:1 ratio against is not sampling noise.
-
-So the fine-tuned model retrieves roughly the same documents but ranks them lower.
+**Fine-tuning did not work. It lost on every metric.** recall@5 0.743 -> 0.729,
+recall@10 0.829 -> 0.800, MRR 0.631 -> 0.533. Per question, the fine-tuned model
+was better on 2, worse on 12, unchanged on 21. A 6:1 ratio against is not noise.
 
 ### Why it likely failed
 
-The training pairs were `(title, abstract_body)`. That teaches the model
-"this title matches this abstract" — a *document-internal* similarity. The actual
-retrieval task is "this **question** matches this abstract", which is a different
-relation. Optimising hard for the first appears to have degraded the
-question-to-passage alignment that MiniLM already had from its original, far
-larger and more diverse training data.
+Training pairs were `(title, abstract_body)`. That teaches *document-internal*
+similarity — "this title matches this abstract". The task being measured is
+`(question, abstract)` similarity, a different relation. Optimising hard for the
+cheap proxy degraded the question-to-passage alignment MiniLM already had from its
+original, far larger and more diverse training data.
 
-This is the risk of weak supervision: the proxy objective was cheap to construct
-from the corpus, but it was not the objective we are measured on.
+This is the characteristic failure of weak supervision: the proxy objective was easy
+to construct from the corpus, but it was not the objective under evaluation.
 
 ### What would be tried next
 
-1. Train on `(generated_question, abstract)` pairs instead — costly here because
-   the Gemini free tier allows only ~20-1000 requests/day depending on model, but
-   it matches the evaluation task directly.
-2. Lower the learning rate and use fewer steps; 1 epoch over 4,531 pairs may
-   already be over-fitting a 22M-parameter model to a narrow objective.
-3. Hold out a validation split to catch the MRR regression during training rather
+1. Train on `(generated_question, abstract)` pairs, matching the evaluation task
+   directly. Constrained here by the Gemini free-tier daily quota.
+2. Lower the learning rate and use fewer steps — one epoch over ~4,200 pairs may
+   already over-fit a 22M-parameter model to a narrow objective.
+3. Hold out a validation split to catch the regression *during* training rather
    than after it.
 
 ### Honesty note
 
-This result is reported as measured. The fine-tuned model is retained in the
-comparison rather than dropped, because a negative result that is explained is
-more informative than a table showing only what worked.
+Reported as measured. The fine-tuned model is kept in the comparison rather than
+dropped, because a negative result that is explained is more informative than a
+table showing only what worked. The off-the-shelf model is what the app serves.

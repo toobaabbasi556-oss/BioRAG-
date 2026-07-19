@@ -10,21 +10,26 @@ Score each as: grounded / partially grounded / hallucinated
 |---|---|
 | Unanswerable questions correctly refused | **5 / 5** |
 | Hallucinated answers to out-of-corpus questions | **0** |
-| Citations pointing to abstracts not in retrieved context | **0 / 15** |
-| Answerable questions answered | 12 / 15 |
-| Refusals on answerable questions | 3 (2 correct — retrieval missed; 1 false refusal, q002) |
+| Citations pointing to abstracts not in retrieved context | **0 / 35** |
+| Answerable questions answered | 10 / 15 |
+| Refusals on answerable questions | 5 (3 correct — retrieval missed; 2 false refusals) |
 
-The refusal path is well calibrated: it declined every out-of-corpus question,
-and two of its three refusals on answerable questions were correct because
-retrieval had genuinely failed to surface the right abstract. q002 is the one
-real defect — the correct abstract WAS retrieved and the model still refused.
+The refusal path is well calibrated on out-of-corpus questions: it declined all
+five, inventing nothing. Three of its five refusals on answerable questions were
+correct, because retrieval had genuinely failed to surface the right abstract and
+declining beats fabricating.
 
-Every citation resolves to an abstract that was actually in the prompt context,
-so the system is not inventing PMIDs.
+The two false refusals are the real defect: the correct abstract WAS retrieved and
+the model still declined. At 2/15 that is a meaningful conservatism bias, and the
+likeliest cause is the strict "use ONLY the abstracts below" instruction combined
+with a small, fast model.
 
-**Manual grounding scores:** _still to be filled in below — the checks above
-verify that citations exist and resolve, not that each claim is faithful to what
-the cited abstract actually says. That judgement requires reading them._
+Every citation resolves to an abstract that was actually in the prompt context, so
+the system is not inventing PMIDs.
+
+**Manual grounding scores:** _still to be filled in below — the checks above verify
+that citations exist and resolve, not that each claim is faithful to what the cited
+abstract actually says. That judgement requires reading them._
 
 ## q001 (single)
 
@@ -32,7 +37,7 @@ the cited abstract actually says. That judgement requires reading them._
 
 **Answer:** Not found in corpus.
 
-**Retrieved:** 41359917, 41764119, 42001761, 41462500, 41703899
+**Retrieved:** 41359917, 41764119, 42001761, 41462500, 41359917
 
 **Expected:** 41713462
 
@@ -44,7 +49,7 @@ the cited abstract actually says. That judgement requires reading them._
 
 **Answer:** Not found in corpus.
 
-**Retrieved:** 41792064, 41432692, 41048355, 41432692, 41048355
+**Retrieved:** 41792064, 41432692, 41432692, 41678273, 41594340
 
 **Expected:** 41792064
 
@@ -109,39 +114,13 @@ While gait biomechanics (such as peak knee extension angle and peak knee extensi
 
 **Answer:** Not found in corpus.
 
-**Retrieved:** 41171649, 40972273, 41844760, 41336102, 41687508
+**Retrieved:** 41171649, 40972273, 41336102, 41687508, 42435638
 
 **Expected:** 41758888
 
 **Score:** 
 
 ## q008 (single)
-
-**Q:** How does the long-term progression of joint degradation in a porcine model of surgically induced meniscal injury compare to the initial post-operative findings?
-
-**Answer:** In a porcine model of knee injury using the DMM+ approach, early degenerative changes (at 6 weeks) are localized to regions experiencing altered mechanical loading, characterized by decreased cartilage mechanics and subchondral bone sclerosis [41532346]. By 6 months, the subchondral bone changes resolve, but the degeneration becomes more diffuse, manifesting as cartilage softening, synovial inflammation, and altered gait, representing a transition from acute mechanical insult to chronic joint pathology [41532346].
-
-**Retrieved:** 41532346, 41462900, 41059346, 41400059, 42044133
-
-**Expected:** 41532346
-
-**Score:** 
-
-## q009 (single)
-
-**Q:** What is the recommended clinical protocol for administering acoustic pressure wave therapy to dogs suffering from degenerative joint disease of the forelimb?
-
-**Answer:** The provided abstracts do not contain a clinical protocol for "acoustic pressure wave therapy" for degenerative joint disease of the forelimb. While the abstracts discuss "extracorporeal shockwave therapy" (ESWT) for elbow osteoarthritis [41751002, 41926981] and "acoustic myography" (AMG) for cranial cruciate ligament disease [42107629], they do not describe a protocol for acoustic pressure wave therapy.
-
-Not found in corpus.
-
-**Retrieved:** 41751002, 41926981, 41751002, 41926981, 42107629
-
-**Expected:** 41926981
-
-**Score:** 
-
-## q010 (single)
 
 **Q:** To what extent does hip replacement surgery resolve long-term musculoskeletal and kinetic abnormalities in patients with severe congenital hip dislocation?
 
@@ -153,19 +132,7 @@ Not found in corpus.
 
 **Score:** 
 
-## q011 (single)
-
-**Q:** What is the underlying molecular pathway by which deer antler-derived peptides facilitate bone repair?
-
-**Answer:** Deer antler polypeptides (DAPs) facilitate bone repair by activating the neurosensory PGE2/EP4/p-CREB axis [42169958]. This activation leads to improved hypothalamic CREB phosphorylation and a reduction in sympathetic tone, which promotes the osteogenic differentiation of skeletal stem/progenitor cells (SSPCs) [42169958].
-
-**Retrieved:** 42169958, 42169958, 42198240, 41542094, 40913865
-
-**Expected:** 42169958
-
-**Score:** 
-
-## q012 (single)
+## q009 (single)
 
 **Q:** How can structured semantic modeling be utilized to assist physical therapists in identifying the physiological origins of walking abnormalities in patients recovering from cerebrovascular accidents?
 
@@ -177,7 +144,7 @@ Not found in corpus.
 
 **Score:** 
 
-## q013 (single)
+## q010 (single)
 
 **Q:** How does the efficacy of treadmill-based pneumatic unloading compare to hydrotherapy or sedentary management for alleviating symptoms and enhancing mobility in patients with degenerative joint disease of the knee?
 
@@ -189,7 +156,7 @@ Not found in corpus.
 
 **Score:** 
 
-## q014 (single)
+## q011 (single)
 
 **Q:** How can clinicians improve the accuracy of identifying movement irregularities in individuals with degenerative hip joint disease compared to traditional single-variable analysis?
 
@@ -201,7 +168,7 @@ Not found in corpus.
 
 **Score:** 
 
-## q015 (single)
+## q012 (single)
 
 **Q:** How do the biomechanical demands and muscular recruitment patterns of reverse-stroke wheelchair propulsion compare to the conventional forward-stroke technique in patients with spinal cord injuries?
 
@@ -213,13 +180,49 @@ Not found in corpus.
 
 **Score:** 
 
+## q013 (single)
+
+**Q:** How does the structural integrity and mechanical performance of a bone-patellar tendon-bone graft compare to the traditional palmaris longus tendon graft when used for medial elbow ligament repair?
+
+**Answer:** When used for ulnar collateral ligament reconstruction, the palmaris longus graft demonstrates a higher torque at failure compared to the bone-patellar tendon-bone (BTB) graft (13.7 ± 4.9 Nm vs. 5.9 ± 1.0 Nm; P = .001) [41179402]. The BTB reconstruction exhibits a high failure rate, with 7 of 8 grafts failing during cycling, primarily at the humeral-sided bone-tendon interface [41179402]. In contrast, the palmaris longus reconstruction does not differ from the native ulnar collateral ligament in initial ligament length, elongation during cycling, stiffness, or opening angle at failure, and is considered the preferred graft choice [41179402].
+
+**Retrieved:** 41179402, 41179402, 41582730, 41475367, 41549263
+
+**Expected:** 41179402
+
+**Score:** 
+
+## q014 (single)
+
+**Q:** Does integrating physiological constraints into vision-based pose estimation algorithms provide a statistically significant improvement in the precision of lower-limb joint angle measurements?
+
+**Answer:** Not found in corpus.
+
+**Retrieved:** 42356801, 41193590, 41193590, 42427911, 42427911
+
+**Expected:** 41091616
+
+**Score:** 
+
+## q015 (single)
+
+**Q:** How does the use of upper-limb support influence joint torque, postural stability, and movement fluidity during the transition between sitting and standing in individuals with degenerative joint disease?
+
+**Answer:** Not found in corpus.
+
+**Retrieved:** 41901033, 42235271, 41926075, 41055862, 41401653
+
+**Expected:** 42235271
+
+**Score:** 
+
 ## q036 (unanswerable)
 
 **Q:** What is the recommended first-line antibiotic for uncomplicated cystitis?
 
 **Answer:** Not found in corpus.
 
-**Retrieved:** 41858536, 41737916, 41756579, 41393516, 41774176
+**Retrieved:** 41393516, 41774176, 41428956, 41267130, 41849693
 
 **Expected:** (none — should refuse)
 
@@ -231,7 +234,7 @@ Not found in corpus.
 
 **Answer:** Not found in corpus.
 
-**Retrieved:** 41895375, 41913907, 42208106, 41921865, 41691594
+**Retrieved:** 42208106, 41010370, 42198240, 41866084, 42242495
 
 **Expected:** (none — should refuse)
 
@@ -255,7 +258,7 @@ Not found in corpus.
 
 **Answer:** Not found in corpus.
 
-**Retrieved:** 42361683, 41740816, 42361683, 41740816, 41723270
+**Retrieved:** 42361683, 42361683, 41537160, 42122347, 41896993
 
 **Expected:** (none — should refuse)
 
@@ -267,7 +270,7 @@ Not found in corpus.
 
 **Answer:** Not found in corpus.
 
-**Retrieved:** 41672441, 42449986, 41672441, 41027081, 42308799
+**Retrieved:** 41027081, 42143463, 41140083, 42143463, 41687574
 
 **Expected:** (none — should refuse)
 
