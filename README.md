@@ -149,6 +149,14 @@ docker build -t biorag .
 docker run --rm -p 8501:8501 --env-file .env -v "$(pwd)/data:/app/data" biorag
 ```
 
+Then open http://localhost:8501.
+
+The image installs **CPU-only PyTorch** from the PyTorch wheel index rather than
+the default PyPI build — nothing here touches a GPU (faiss-cpu, MiniLM inference
+over ~4k chunks), and the default wheel would bake in ~3GB of unused CUDA
+libraries. The corpus and FAISS index are not baked into the image; they are
+mounted at run time via `-v`, so rebuilding the corpus does not stale the image.
+
 Note: the Gemini free tier is tightly rate-limited (as low as 20 requests/day on
 some models), which constrains generation-heavy steps. Retrieval evaluation is
 fully local and needs no API access.
