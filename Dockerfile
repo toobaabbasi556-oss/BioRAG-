@@ -2,7 +2,14 @@ FROM python:3.12-slim
 
 WORKDIR /app
 
-# Install deps first so code changes don't invalidate the dependency layer.
+# CPU-only torch, installed first and deliberately from PyTorch's cpu index.
+# The default PyPI wheel bundles ~3GB of CUDA libraries; nothing here uses a GPU
+# (faiss-cpu, MiniLM inference over 4k chunks), so they are dead weight in the
+# image. Installing it up front means the requirements install below finds the
+# torch constraint already satisfied and will not pull the CUDA build.
+RUN pip install --no-cache-dir --index-url https://download.pytorch.org/whl/cpu torch
+
+# Deps before code so source edits don't invalidate the dependency layer.
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
